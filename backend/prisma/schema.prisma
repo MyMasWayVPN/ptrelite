@@ -1,0 +1,146 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      Role     @default(MEMBER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  containers Container[]
+  logs       AuditLog[]
+  sessions   UserSession[]
+
+  @@map("users")
+}
+
+model UserSession {
+  id           String   @id @default(cuid())
+  userId       String
+  refreshToken String   @unique
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_sessions")
+}
+
+model Container {
+  id          String          @id @default(cuid())
+  name        String
+  image       String
+  dockerId    String?         @unique
+  status      ContainerStatus @default(STOPPED)
+  ownerId     String
+  config      Json            @default("{}")
+  resources   Json            @default("{}")
+  ports       Json            @default("[]")
+  environment Json            @default("{}")
+  volumes     Json            @default("[]")
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  // Relations
+  owner   User            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  tunnels CloudflareTunnel[]
+  logs    ContainerLog[]
+
+  @@map("containers")
+}
+
+model CloudflareTunnel {
+  id          String        @id @default(cuid())
+  containerId String
+  token       String
+  domain      String?
+  status      TunnelStatus  @default(INACTIVE)
+  config      Json          @default("{}")
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  container Container @relation(fields: [containerId], references: [id], onDelete: Cascade)
+
+  @@map("cloudflare_tunnels")
+}
+
+model ContainerLog {
+  id          String    @id @default(cuid())
+  containerId String
+  command     String?
+  output      String?
+  exitCode    Int?
+  timestamp   DateTime  @default(now())
+
+  // Relations
+  container Container @relation(fields: [containerId], references: [id], onDelete: Cascade)
+
+  @@map("container_logs")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  resource  String?
+  details   Json     @default("{}")
+  ipAddress String?
+  userAgent String?
+  timestamp DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("audit_logs")
+}
+
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("system_settings")
+}
+
+// Enums
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+enum ContainerStatus {
+  RUNNING
+  STOPPED
+  PAUSED
+  RESTARTING
+  REMOVING
+  DEAD
+  CREATED
+  EXITED
+}
+
+enum TunnelStatus {
+  ACTIVE
+  INACTIVE
+  ERROR
+  CONNECTING
+}

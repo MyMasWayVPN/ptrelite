@@ -1,0 +1,79 @@
+{
+  "name": "panel-backend",
+  "version": "1.0.0",
+  "description": "Backend API untuk Web Hosting Panel - Windows Compatible",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "build": "echo 'No build step required for Node.js'",
+    "test": "jest --detectOpenHandles",
+    "test:watch": "jest --watch --detectOpenHandles",
+    "test:coverage": "jest --coverage --detectOpenHandles",
+    "test:integration": "jest --testPathPattern=integration --detectOpenHandles",
+    "lint": "eslint src/ --ext .js",
+    "lint:fix": "eslint src/ --ext .js --fix",
+    "format": "prettier --write src/",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "db:reset": "prisma migrate reset",
+    "db:studio": "prisma studio",
+    "db:generate": "prisma generate"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "compression": "^1.7.4",
+    "express-rate-limit": "^7.1.5",
+    "express-validator": "^7.0.1",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "cookie-parser": "^1.4.6",
+    "multer": "^1.4.5-lts.1",
+    "socket.io": "^4.7.4",
+    "dockerode": "^4.0.0",
+    "archiver": "^6.0.1",
+    "unzipper": "^0.10.14",
+    "tar": "^6.2.0",
+    "mime-types": "^2.1.35",
+    "uuid": "^9.0.1",
+    "dotenv": "^16.3.1",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1",
+    "ioredis": "^5.3.2",
+    "bullmq": "^4.15.4",
+    "@prisma/client": "^5.7.1",
+    "prisma": "^5.7.1",
+    "node-cron": "^3.0.3",
+    "axios": "^1.6.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.0",
+    "prettier": "^3.1.1",
+    "@types/jest": "^29.5.8"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "keywords": [
+    "api",
+    "backend",
+    "docker",
+    "container",
+    "hosting",
+    "panel"
+  ],
+  "author": "Panel Backend Team",
+  "license": "MIT"
+}
